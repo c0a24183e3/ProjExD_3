@@ -199,7 +199,7 @@ def main():
                         score.score += 1  # スコアアップ
                         bird.change_img(6, screen)
         bombs = [bomb for bomb in bombs if bomb is not None]
-        beams = [beam for beam in beams if beam is not None and 0<= beam.rct.centerx <= WIDTH and 0<= beam.rct.centery <= HEIGHT]
+        beams = [beam for beam in beams if beam is not None and 0<= beam.rct.centerx <= WIDTH and 0<= beam.rct.centery <= HEIGHT]  # 画面外にでたビーム削除
 
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
