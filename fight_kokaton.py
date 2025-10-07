@@ -161,10 +161,11 @@ def main():
     bird = Bird((300, 200))
     # bomb = Bomb((255, 0, 0), 10)
     bombs = list()  # 爆弾用の空リスト
+    beams = list()  # ビーム用の空リスト
     for _ in range(NUM_OF_BOMBS):
         bomb = Bomb((255, 0, 0), 10)
         bombs.append(bomb)
-    beam = None  # ゲーム初期化時にはビームは存在しない
+    # beam = None  # ゲーム初期化時にはビームは存在しない
     score = Score()  # インスタンスの生成
     clock = pg.time.Clock()
     tmr = 0
@@ -174,7 +175,7 @@ def main():
                 return
             if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
                 # スペースキー押下でBeamクラスのインスタンス生成
-                beam = Beam(bird)
+                beams.append(Beam(bird))
         screen.blit(bg_img, [0, 0])
         
         for bomb in bombs:
@@ -187,21 +188,24 @@ def main():
                 pg.display.update()
                 time.sleep(1)
                 return
-            
-        for b, bomb in enumerate(bombs):
-            if beam is not None:
-                if beam.rct.colliderect(bomb.rct):
-                    # ビームが爆弾に当たったら，爆弾を消す
-                    beam = None
-                    bombs[b] = None
-                    score.score += 1  # スコアアップ
-                    bird.change_img(6, screen)
+
+        for i, beam in enumerate(beams):    
+            for b, bomb in enumerate(bombs):
+                if beam is not None and bomb is not None:
+                    if beam.rct.colliderect(bomb.rct):
+                        # ビームが爆弾に当たったら，爆弾を消す
+                        beams[i] = None
+                        bombs[b] = None
+                        score.score += 1  # スコアアップ
+                        bird.change_img(6, screen)
         bombs = [bomb for bomb in bombs if bomb is not None]
+        beams = [beam for beam in beams if beam is not None]
 
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
-        if beam is not None:
-            beam.update(screen)  
+        for beam in beams:
+            if check_bound(beam.rct) == (True, True):
+                beam.update(screen)  
         for bomb in bombs:     
             bomb.update(screen)
         score.update(screen)  # スコアを描画
