@@ -199,13 +199,12 @@ def main():
                         score.score += 1  # スコアアップ
                         bird.change_img(6, screen)
         bombs = [bomb for bomb in bombs if bomb is not None]
-        beams = [beam for beam in beams if beam is not None]
+        beams = [beam for beam in beams if beam is not None and 0<= beam.rct.centerx <= WIDTH and 0<= beam.rct.centery <= HEIGHT]
 
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
         for beam in beams:
-            if check_bound(beam.rct) == (True, True):
-                beam.update(screen)  
+            beam.update(screen)  
         for bomb in bombs:     
             bomb.update(screen)
         score.update(screen)  # スコアを描画
